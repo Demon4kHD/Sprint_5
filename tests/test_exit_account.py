@@ -1,16 +1,20 @@
-import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 import links
 import locators
 
 class TestExitToAccount:
-    def test_authorize_user_click_exit_account(self, registration_user):
-        self.driver = registration_user
-        self.driver.find_element(By.XPATH, locators.AllPagesElements.TOPLINE_ACCOUNT).click()
-        time.sleep(1)
-        self.driver.find_element(By.XPATH, locators.PersonalAccountElements.ACC_EXIT_BUTTON).click()
-        time.sleep(1)
+    def test_authorize_user_click_exit_account(self, authorization_user):
+        driver = authorization_user
+        WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.MainPageElements.MAIN_BURGER_BUN_GROUP))
+        driver.find_element(*locators.AllPagesElements.TOPLINE_ACCOUNT).click()
 
-        assert self.driver.current_url == links.AUTHORIZATION_URL
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable(locators.PersonalAccountElements.ACC_EXIT_BUTTON)).click()
+
+        WebDriverWait(driver, 20).until(EC.element_to_be_clickable(
+            locators.AuthorizationPageElements.AUTH_H2_ENTRANCE))
+
+        assert driver.current_url == links.AUTHORIZATION_URL
