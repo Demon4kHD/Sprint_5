@@ -1,10 +1,8 @@
-from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pytest
 import links
 import locators
-import data_generator
-import random
 
 
 class TestAuthorization:
@@ -15,17 +13,24 @@ class TestAuthorization:
 
     @pytest.mark.parametrize('where_from, what_to_click', list_of_links)
     def test_non_authorize_user_go_to_authorization_page(self, where_from, what_to_click, start_driver):
-        self.driver = start_driver
-        self.driver.get(where_from)
-        time.sleep(1)
-        self.driver.find_element(By.XPATH, what_to_click).click()
-        time.sleep(1)
+        driver = start_driver
 
-        assert links.AUTHORIZATION_URL == self.driver.current_url
+        driver.get(where_from)
+        driver.find_element(*what_to_click).click()
 
-    def test_authorize_user_go_to_authorization_page(self, registration_user):
-        self.driver = registration_user
-        self.driver.find_element(By.XPATH, locators.AllPagesElements.TOPLINE_ACCOUNT).click()
-        time.sleep(1)
+        WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.AuthorizationPageElements.AUTH_H2_ENTRANCE))
 
-        assert links.PROFILE_URL == self.driver.current_url
+        assert links.AUTHORIZATION_URL == driver.current_url
+
+    def test_authorize_user_go_to_authorization_page(self, authorization_user):
+        driver = authorization_user
+
+        WebDriverWait(driver, 20).until(EC.element_to_be_clickable(
+            locators.MainPageElements.MAIN_BURGER_BUN_GROUP))
+        driver.find_element(*locators.AllPagesElements.TOPLINE_ACCOUNT).click()
+
+        WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.PersonalAccountElements.ACC_EXIT_BUTTON)).click()
+
+        assert links.PROFILE_URL == driver.current_url
