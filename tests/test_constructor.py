@@ -1,49 +1,76 @@
-import pytest
-from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import links
 import locators
 
 
 class TestSelectGroupOfBurger:
-    data_list = [locators.MainPageElements.MAIN_BURGER_BUN_GROUP,
-                  locators.MainPageElements.MAIN_SAUCE_GROUP,
-                  locators.MainPageElements.MAIN_FILLING_GROUP]
+    search_string = 'tab_tab_type_current__'
 
-    @pytest.mark.parametrize('selected_group', data_list)
-    def test_selecting_group_burger_is_current_other_is_no_select_by_tap(
-            self, selected_group, start_driver):
-        search_string = 'tab_tab_type_current__'
+    def test_default_selecting_group_burger_is_current(self, start_driver):
+        driver = start_driver
+        driver.get(links.STELLAR_BURGERS_URL)
 
-        self.driver = start_driver
-        self.driver.get(links.STELLAR_BURGERS_URL)
-        time.sleep(1)
-        if selected_group is not locators.MainPageElements.MAIN_BURGER_BUN_GROUP:
-            self.driver.find_element(By.XPATH, selected_group).click()
-        time.sleep(1)
-        comparing_value_of_group_burger_bun = (
-            self.driver.find_element(By.XPATH, locators.MainPageElements.MAIN_PARENT_ELEMENT_BURGER_BUN).
-            get_attribute('class'))
-        comparing_value_of_group_souce = (
-            self.driver.find_element(By.XPATH, locators.MainPageElements.MAIN_PARENT_ELEMENT_SAUCE).
-            get_attribute('class'))
-        comparing_value_of_group_filling = (
-            self.driver.find_element(By.XPATH, locators.MainPageElements.MAIN_PARENT_ELEMENT_FILLING).
-            get_attribute('class'))
-        time.sleep(1)
-        if selected_group == self.data_list[0]:
-            assert search_string in comparing_value_of_group_burger_bun
-            assert search_string not in comparing_value_of_group_souce
-            assert search_string not in comparing_value_of_group_filling
-        elif selected_group == self.data_list[1]:
-            assert search_string not in comparing_value_of_group_burger_bun
-            assert search_string in comparing_value_of_group_souce
-            assert search_string not in comparing_value_of_group_filling
-        else:
-            assert search_string not in comparing_value_of_group_burger_bun
-            assert search_string not in comparing_value_of_group_souce
-            assert search_string in comparing_value_of_group_filling
+        comparing_value_of_group_burger_bun = WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.MainPageElements.MAIN_PARENT_ELEMENT_BURGER_BUN)).get_attribute('class')
+        comparing_value_of_group_souce = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_SAUCE).get_attribute('class')
+        comparing_value_of_group_filling = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_FILLING).get_attribute('class')
 
-    data_list_elements = [locators.MainPageElements.MAIN_FIRST_SCROLL_ELEMENT,
-                          locators.MainPageElements.MAIN_SECOND_SCROLL_ELEMENT,
-                          locators.MainPageElements.MAIN_THIRD_SCROLL_ELEMENT]
+        assert self.search_string in comparing_value_of_group_burger_bun
+        assert self.search_string not in comparing_value_of_group_souce
+        assert self.search_string not in comparing_value_of_group_filling
+
+    def test_selecting_sauce_is_current(self, start_driver):
+        driver = start_driver
+        driver.get(links.STELLAR_BURGERS_URL)
+
+        driver.find_element(*locators.MainPageElements.MAIN_SAUCE_GROUP).click()
+
+        comparing_value_of_group_burger_bun = WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.MainPageElements.MAIN_PARENT_ELEMENT_BURGER_BUN)).get_attribute('class')
+        comparing_value_of_group_souce = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_SAUCE).get_attribute('class')
+        comparing_value_of_group_filling = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_FILLING).get_attribute('class')
+
+        assert self.search_string not in comparing_value_of_group_burger_bun
+        assert self.search_string in comparing_value_of_group_souce
+        assert self.search_string not in comparing_value_of_group_filling
+
+    def test_selecting_filling_is_current(self, start_driver):
+        driver = start_driver
+        driver.get(links.STELLAR_BURGERS_URL)
+
+        driver.find_element(*locators.MainPageElements.MAIN_FILLING_GROUP).click()
+
+        comparing_value_of_group_burger_bun = WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.MainPageElements.MAIN_PARENT_ELEMENT_BURGER_BUN)).get_attribute('class')
+        comparing_value_of_group_souce = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_SAUCE).get_attribute('class')
+        comparing_value_of_group_filling = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_FILLING).get_attribute('class')
+
+        assert self.search_string not in comparing_value_of_group_burger_bun
+        assert self.search_string not in comparing_value_of_group_souce
+        assert self.search_string in comparing_value_of_group_filling
+
+    def test_selecting_group_burger_is_current(self, start_driver):
+        driver = start_driver
+        driver.get(links.STELLAR_BURGERS_URL)
+
+        WebDriverWait(driver, 20).until(EC.element_to_be_clickable(
+            locators.MainPageElements.MAIN_SAUCE_GROUP)).click()
+        driver.find_element(*locators.MainPageElements.MAIN_BURGER_BUN_GROUP).click()
+
+        comparing_value_of_group_burger_bun = WebDriverWait(driver, 20).until(EC.visibility_of_element_located(
+            locators.MainPageElements.MAIN_PARENT_ELEMENT_BURGER_BUN)).get_attribute('class')
+        comparing_value_of_group_souce = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_SAUCE).get_attribute('class')
+        comparing_value_of_group_filling = driver.find_element(
+            *locators.MainPageElements.MAIN_PARENT_ELEMENT_FILLING).get_attribute('class')
+
+        assert self.search_string in comparing_value_of_group_burger_bun
+        assert self.search_string not in comparing_value_of_group_souce
+        assert self.search_string not in comparing_value_of_group_filling
