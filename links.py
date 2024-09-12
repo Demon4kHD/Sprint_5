@@ -1,0 +1,7 @@
+STELLAR_BURGERS_URL = 'https://stellarburgers.nomoreparties.site/'
+REGISTRATION_URL = STELLAR_BURGERS_URL + 'register'
+AUTHORIZATION_URL = STELLAR_BURGERS_URL + 'login'
+FEED_URL = STELLAR_BURGERS_URL + 'feed'
+FORGOT_PASSWORD_URL = STELLAR_BURGERS_URL + 'forgot-password'
+PROFILE_URL = STELLAR_BURGERS_URL + 'account/profile'
+ORDER_HISTORY = STELLAR_BURGERS_URL + 'order-history'
